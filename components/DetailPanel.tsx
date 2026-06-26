@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { getTopic, type TopicType } from "@/lib/roadmap";
@@ -15,7 +16,9 @@ const BADGE: Record<TopicType, string> = {
   optional: "선택",
 };
 
-/** 3계층 노드 클릭 시 우측에 펼쳐지는 판서(상세) 패널 */
+const MIN_WIDTH = 450; // 최소 너비
+
+/** 3계층 노드 클릭 시 우측에 펼쳐지는 판서(상세) 패널 — 좌측 경계 드래그로 너비 조절 */
 export function DetailPanel({
   topicId,
   contents,
@@ -30,12 +33,57 @@ export function DetailPanel({
   const content = topicId ? contents[topicId] : undefined;
   const color = topic ? CHALK[topic.type] : "#f3f0e7";
 
+  const asideRef = useRef<HTMLElement>(null);
+  const dragging = useRef(false);
+  const [width, setWidth] = useState(MIN_WIDTH);
+  const [resizing, setResizing] = useState(false);
+
+  const onMove = useCallback((e: PointerEvent) => {
+    if (!dragging.current || !asideRef.current) return;
+    const right = asideRef.current.getBoundingClientRect().right;
+    const max = window.innerWidth - 80;
+    setWidth(Math.max(MIN_WIDTH, Math.min(right - e.clientX, max)));
+  }, []);
+
+  const onUp = useCallback(() => {
+    dragging.current = false;
+    setResizing(false);
+    window.removeEventListener("pointermove", onMove);
+    window.removeEventListener("pointerup", onUp);
+  }, [onMove]);
+
+  const onHandleDown = (e: React.PointerEvent) => {
+    e.preventDefault();
+    dragging.current = true;
+    setResizing(true);
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+  };
+
+  useEffect(() => {
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+  }, [onMove, onUp]);
+
   return (
     <aside
-      className={`absolute right-0 top-0 z-30 flex h-full w-[min(440px,46%)] flex-col border-l-2 border-dashed border-chalk/40 bg-black/25 backdrop-blur-[1px] transition-transform duration-300 ${
-        open ? "translate-x-0" : "translate-x-full"
-      }`}
+      ref={asideRef}
+      style={{ width }}
+      className={`absolute right-0 top-0 z-30 flex h-full max-w-[92%] flex-col border-l-2 border-dashed border-chalk/40 bg-black/25 backdrop-blur-[1px] ${
+        resizing ? "" : "transition-transform duration-300"
+      } ${open ? "translate-x-0" : "translate-x-full"}`}
     >
+      {/* 좌측 리사이즈 핸들 */}
+      <div
+        onPointerDown={onHandleDown}
+        className="group absolute left-0 top-0 z-40 h-full w-2 -translate-x-1/2 cursor-col-resize"
+        title="드래그하여 너비 조절"
+      >
+        <div className="mx-auto h-full w-[3px] bg-chalk/0 transition-colors group-hover:bg-chalk/50" />
+      </div>
+
       {topic && (
         <>
           <div className="flex items-start justify-between gap-3 px-6 pt-6">
