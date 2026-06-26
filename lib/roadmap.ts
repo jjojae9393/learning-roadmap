@@ -63,6 +63,7 @@ export const SECTIONS: Section[] = [
       },
     ],
   },
+  /* ── Backend / Frontend 섹션: 현재 비활성화(공통 기초만 노출) ──
   {
     id: "backend",
     title: "Backend",
@@ -184,9 +185,10 @@ export const SECTIONS: Section[] = [
       },
     ],
   },
+  */
 ];
 
-// ── 파생 유틸 ────────────────────────────────────────────────────
+// ── 파생 유틸────────────────────────────────────────────────────
 
 /** id → Topic 평탄화 인덱스 (모든 섹션/깊이) */
 const index: Record<string, Topic> = {};
