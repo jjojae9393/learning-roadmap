@@ -11,22 +11,22 @@ permissions:
   pages: write
   id-token: write
 
-# 동시에 한 번만 배포 (이전 실행 취소)
+# 동시에 한 번만 배포. 진행 중인 운영 배포는 취소하지 않는다(취소 시 다음 배포 폴링이 꼬여 타임아웃 발생 가능)
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: pnpm
