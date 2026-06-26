@@ -156,8 +156,21 @@ body {
   display: none;
 }
 
-/* 칠판 위 컨트롤 버튼 가독성 */
+/* 칠판 위 컨트롤 버튼 — 어두운 배경 + 흰 분필 아이콘으로 대비 확보 */
+.react-flow__controls {
+  border: 1px solid rgba(243, 240, 231, 0.35);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
 .react-flow__controls-button {
-  background: rgba(243, 240, 231, 0.9);
-  border-bottom: 1px solid var(--board-edge);
+  background: rgba(20, 42, 35, 0.92);
+  border-bottom: 1px solid rgba(243, 240, 231, 0.25);
+  color: var(--chalk);
+}
+.react-flow__controls-button svg {
+  fill: var(--chalk);
+}
+.react-flow__controls-button:hover {
+  background: rgba(243, 240, 231, 0.18);
 }
