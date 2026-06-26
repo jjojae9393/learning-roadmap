@@ -14,16 +14,18 @@
 
 통신 과정을 여러 층으로 나누고 각 층에 역할을 하나씩 맡긴 구조입니다.
 윗층은 아랫층에 일을 맡기고, 아랫층의 내부 처리는 신경 쓰지 않습니다.
+위(사용자와 가까운 쪽)에서 아래(물리적 전송)로 갈수록 토대가 넓어지는 피라미드로 그려볼 수 있습니다.
 
-위에서부터 아래로:
+<div class="layer-stack">
+  <div class="dir"><span>보낼 때 ↓ (정보 덧붙임)</span><span>받을 때 ↑ (한 겹씩 벗김)</span></div>
+  <div class="layer layer-1"><span class="l-name">애플리케이션 계층</span><span class="l-desc">무슨 내용을 주고받을지 · HTTP, DNS, 이메일</span></div>
+  <div class="layer layer-2"><span class="l-name">전송 계층</span><span class="l-desc">어떻게 전달할지 · TCP, UDP</span></div>
+  <div class="layer layer-3"><span class="l-name">인터넷 계층</span><span class="l-desc">어디로 갈지(경로) · IP</span></div>
+  <div class="layer layer-4"><span class="l-name">네트워크 인터페이스 계층</span><span class="l-desc">실제 물리적 전송 · 케이블, 와이파이</span></div>
+</div>
 
-- **애플리케이션 계층** — 무슨 내용을 주고받을지 정함 (HTTP, DNS, 이메일 등)
-- **전송 계층** — 어떻게 전달할지 책임짐 (TCP, UDP)
-- **인터넷 계층** — 어디로 갈지 경로를 정함 (IP)
-- **네트워크 인터페이스 계층** — 실제 물리적 전송을 담당 (케이블, 와이파이 등)
-
-데이터를 보낼 때는 위에서 아래로 내려가며 각 층이 정보를 덧붙이고,
-받을 때는 아래에서 위로 올라가며 한 겹씩 벗겨 원래 내용을 복원합니다.
+데이터를 보낼 때는 **위에서 아래로** 내려가며 각 층이 정보를 덧붙이고,
+받을 때는 **아래에서 위로** 올라가며 한 겹씩 벗겨 원래 내용을 복원합니다.
 
 > 핵심은 HTTP, TCP, IP가 **경쟁 관계가 아니라 서로 다른 층에서 협력하는 관계**라는 점입니다.
 > (OSI 7계층은 같은 개념을 더 세밀하게 나눈 모델입니다.)

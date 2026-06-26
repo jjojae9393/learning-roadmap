@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 import { getTopic, type TopicType } from "@/lib/roadmap";
 
 const CHALK: Record<TopicType, string> = {
@@ -120,7 +121,9 @@ export function DetailPanel({
             )}
             {content ? (
               <article className="markdown font-hand text-[17px] leading-relaxed text-chalk">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+                <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+                  {content}
+                </ReactMarkdown>
               </article>
             ) : (
               <p className="font-hand text-base text-chalk/50">
