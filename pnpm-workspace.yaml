@@ -1,0 +1,5 @@
+# pnpm: 네이티브 빌드 스크립트 실행을 허용할 의존성.
+# (Next 이미지 최적화용 sharp, eslint-config-next 의 unrs-resolver)
+allowBuilds:
+  sharp: true
+  unrs-resolver: true
