@@ -92,7 +92,6 @@ export function RoadmapFlow({ contents }: { contents: Record<string, string> }) 
         edges={edges}
         nodeTypes={nodeTypes}
         onNodeClick={onNodeClick}
-        onPaneClick={() => setSelected(null)}
         fitView
         fitViewOptions={{ padding: 0.15 }}
         minZoom={0.3}
