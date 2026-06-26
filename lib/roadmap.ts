@@ -35,6 +35,7 @@ export const SECTIONS: Section[] = [
         summary: "웹이 어떻게 동작하는지 — 모든 개발의 출발점.",
         children: [
           { id: "how-internet-works", title: "인터넷의 기본", type: "secondary" },
+          { id: "protocols-and-layers", title: "프로토콜과 계층 구조", type: "secondary" },
           { id: "what-is-http", title: "What is HTTP?", type: "secondary" },
           { id: "dns", title: "DNS and how it works?", type: "optional" },
         ],
