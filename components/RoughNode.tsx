@@ -8,8 +8,9 @@ import type { TopicType } from "@/lib/roadmap";
 // 분필 색상 (테두리 = 글씨색)
 const CHALK: Record<TopicType, string> = {
   primary: "#f3f0e7", // 흰 분필
-  secondary: "#f2e06b", // 노란 분필
-  optional: "#9fc8bb", // 청록 분필
+  required: "#ec5a87", // 진한 분홍(로즈) 분필 — 필수
+  secondary: "#f2e06b", // 노란 분필 — 추천
+  optional: "#9fc8bb", // 청록 분필 — 선택
 };
 
 interface Data {

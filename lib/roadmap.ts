@@ -5,7 +5,7 @@
 // - 하위(3계층)는 대주제 클릭 시 펼쳐진다.
 // - 그래프는 좌→우 가로 플로우로 렌더된다.
 
-export type TopicType = "primary" | "secondary" | "optional";
+export type TopicType = "primary" | "required" | "secondary" | "optional";
 
 export interface Topic {
   id: string; // URL slug 으로도 사용 (전체에서 유일해야 함)
@@ -34,9 +34,9 @@ export const SECTIONS: Section[] = [
         type: "primary",
         summary: "웹이 어떻게 동작하는지 — 모든 개발의 출발점.",
         children: [
-          { id: "how-internet-works", title: "인터넷의 기본", type: "secondary" },
+          { id: "how-internet-works", title: "인터넷의 기본", type: "required" },
           { id: "protocols-and-layers", title: "프로토콜과 계층 구조", type: "secondary" },
-          { id: "what-is-http", title: "What is HTTP?", type: "secondary" },
+          { id: "what-is-http", title: "What is HTTP?", type: "required" },
           { id: "dns", title: "DNS and how it works?", type: "optional" },
         ],
       },
@@ -46,7 +46,7 @@ export const SECTIONS: Section[] = [
         type: "primary",
         summary: "코드 변경 이력 관리와 협업의 기본기.",
         children: [
-          { id: "git", title: "Git", type: "secondary" },
+          { id: "git", title: "Git", type: "required" },
           { id: "github", title: "GitHub", type: "secondary" },
         ],
       },

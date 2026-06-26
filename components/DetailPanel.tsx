@@ -8,11 +8,13 @@ import { getTopic, type TopicType } from "@/lib/roadmap";
 
 const CHALK: Record<TopicType, string> = {
   primary: "#f3f0e7",
+  required: "#ec5a87",
   secondary: "#f2e06b",
   optional: "#9fc8bb",
 };
 const BADGE: Record<TopicType, string> = {
   primary: "핵심",
+  required: "필수",
   secondary: "추천",
   optional: "선택",
 };
