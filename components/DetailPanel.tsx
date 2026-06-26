@@ -16,17 +16,21 @@ const BADGE: Record<TopicType, string> = {
   optional: "선택",
 };
 
-const MIN_WIDTH = 450; // 최소 너비
+export const MIN_PANEL_WIDTH = 450; // 최소 너비
 
 /** 3계층 노드 클릭 시 우측에 펼쳐지는 판서(상세) 패널 — 좌측 경계 드래그로 너비 조절 */
 export function DetailPanel({
   topicId,
   contents,
   onClose,
+  width,
+  onWidthChange,
 }: {
   topicId: string | null;
   contents: Record<string, string>;
   onClose: () => void;
+  width: number;
+  onWidthChange: (w: number) => void;
 }) {
   const open = !!topicId;
   const topic = topicId ? getTopic(topicId) : undefined;
@@ -35,15 +39,17 @@ export function DetailPanel({
 
   const asideRef = useRef<HTMLElement>(null);
   const dragging = useRef(false);
-  const [width, setWidth] = useState(MIN_WIDTH);
   const [resizing, setResizing] = useState(false);
 
-  const onMove = useCallback((e: PointerEvent) => {
-    if (!dragging.current || !asideRef.current) return;
-    const right = asideRef.current.getBoundingClientRect().right;
-    const max = window.innerWidth - 80;
-    setWidth(Math.max(MIN_WIDTH, Math.min(right - e.clientX, max)));
-  }, []);
+  const onMove = useCallback(
+    (e: PointerEvent) => {
+      if (!dragging.current || !asideRef.current) return;
+      const right = asideRef.current.getBoundingClientRect().right;
+      const max = window.innerWidth - 80;
+      onWidthChange(Math.max(MIN_PANEL_WIDTH, Math.min(right - e.clientX, max)));
+    },
+    [onWidthChange],
+  );
 
   const onUp = useCallback(() => {
     dragging.current = false;

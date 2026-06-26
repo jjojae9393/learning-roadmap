@@ -8,12 +8,13 @@ import {
   type Node,
   type Edge,
   type NodeMouseHandler,
+  type FitViewOptions,
 } from "@xyflow/react";
 import { useMemo, useState } from "react";
 import { buildGraph } from "@/lib/layout";
 import { RoughNode } from "./RoughNode";
 import { RootNode } from "./RootNode";
-import { DetailPanel } from "./DetailPanel";
+import { DetailPanel, MIN_PANEL_WIDTH } from "./DetailPanel";
 
 const nodeTypes = { topic: RoughNode, section: RootNode };
 
@@ -22,6 +23,24 @@ export function RoadmapFlow({ contents }: { contents: Record<string, string> }) 
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   // 우측 패널에 표시 중인 3계층 토픽 id
   const [selected, setSelected] = useState<string | null>(null);
+  // 우측 판서 패널 너비 (Fit View 패딩 계산에도 사용)
+  const [panelWidth, setPanelWidth] = useState(MIN_PANEL_WIDTH);
+
+  // 패널이 열려 있으면 그 너비만큼 우측 패딩 → Fit View 가 패널 왼쪽 영역에 맞춰짐
+  const fitViewOptions = useMemo<FitViewOptions>(
+    () =>
+      selected
+        ? {
+            padding: {
+              top: "48px",
+              bottom: "48px",
+              left: "48px",
+              right: `${panelWidth + 32}px`,
+            },
+          }
+        : { padding: 0.15 },
+    [selected, panelWidth],
+  );
 
   const { nodes, edges } = useMemo(() => {
     const g = buildGraph(expanded);
@@ -89,10 +108,16 @@ export function RoadmapFlow({ contents }: { contents: Record<string, string> }) 
           size={1}
           color="rgba(243,240,231,0.12)"
         />
-        <Controls showInteractive={false} />
+        <Controls showInteractive={false} fitViewOptions={fitViewOptions} />
       </ReactFlow>
 
-      <DetailPanel topicId={selected} contents={contents} onClose={() => setSelected(null)} />
+      <DetailPanel
+        topicId={selected}
+        contents={contents}
+        onClose={() => setSelected(null)}
+        width={panelWidth}
+        onWidthChange={setPanelWidth}
+      />
     </div>
   );
 }
