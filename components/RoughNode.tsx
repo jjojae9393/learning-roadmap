@@ -19,11 +19,12 @@ interface Data {
   level: 1 | 2 | 3;
   hasChildren: boolean;
   expanded: boolean;
+  hasContent: boolean;
 }
 
 /** 칠판 위 분필로 그린 듯한 토픽 노드 (좌→우 플로우) */
 export function RoughNode({ id, data }: NodeProps) {
-  const { title, topicType, level, hasChildren, expanded } = data as unknown as Data;
+  const { title, topicType, level, hasChildren, expanded, hasContent } = data as unknown as Data;
   const router = useRouter();
   const wrapRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -98,15 +99,19 @@ export function RoughNode({ id, data }: NodeProps) {
         </span>
       )}
 
-      {/* 상세 페이지 아이콘 (펼침과 분리) */}
-      <button
-        onClick={goDetail}
-        title="상세 보기"
-        className="absolute -top-2 -right-2 z-20 flex h-5 w-5 items-center justify-center rounded-full text-[11px] leading-none"
-        style={{ color: "#1f3b32", background: stroke }}
-      >
-        ⓘ
-      </button>
+      {/* 상세 보기 (상세 .md 가 있는 노드만). 펼침 동작과 분리 */}
+      {hasContent && (
+        <button
+          onClick={goDetail}
+          title="상세 보기"
+          className="group/detail relative z-20 ml-0.5 inline-flex h-[19px] w-[19px] items-center justify-center rounded-full border text-[11px] leading-none opacity-70 transition-opacity hover:opacity-100"
+          style={{ color: stroke, borderColor: stroke }}
+        >
+          <span className="transition-transform group-hover/detail:translate-x-px group-hover/detail:-translate-y-px">
+            ↗
+          </span>
+        </button>
+      )}
 
       {/* 가로 플로우 연결 핸들 */}
       <Handle id="l" type="target" position={Position.Left} className="!opacity-0" />

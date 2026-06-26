@@ -16,12 +16,13 @@ import { RootNode } from "./RootNode";
 
 const nodeTypes = { topic: RoughNode, section: RootNode };
 
-export function RoadmapFlow() {
+export function RoadmapFlow({ contentSlugs }: { contentSlugs: string[] }) {
   // 펼쳐진 대주제(2계층) id 집합. 기본: 전부 접힘(=하위 숨김)
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const contentSet = useMemo(() => new Set(contentSlugs), [contentSlugs]);
 
   const { nodes, edges } = useMemo(() => {
-    const g = buildGraph(expanded);
+    const g = buildGraph(expanded, contentSet);
     const ns: Node[] = g.nodes.map((n) => ({
       id: n.id,
       type: n.type,
@@ -44,7 +45,7 @@ export function RoadmapFlow() {
       },
     }));
     return { nodes: ns, edges: es };
-  }, [expanded]);
+  }, [expanded, contentSet]);
 
   // 노드 클릭 = 펼침/접기 (자식 있는 대주제만). 상세는 노드 안 ⓘ 아이콘.
   const onNodeClick: NodeMouseHandler = (_, node) => {
