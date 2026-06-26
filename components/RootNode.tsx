@@ -8,6 +8,7 @@ export function RootNode({ data }: NodeProps) {
   return (
     <div className="relative select-none">
       <span className="font-hand text-4xl font-bold text-ink">{title}</span>
+      <Handle id="t" type="target" position={Position.Top} className="!opacity-0" />
       <Handle id="b" type="source" position={Position.Bottom} className="!opacity-0" />
     </div>
   );
