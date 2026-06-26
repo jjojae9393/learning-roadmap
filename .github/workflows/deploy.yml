@@ -41,6 +41,8 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true # Pages가 꺼져 있으면 자동으로 켠다
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
