@@ -16,12 +16,12 @@
 윗층은 아랫층에 일을 맡기고, 아랫층의 내부 처리는 신경 쓰지 않습니다.
 위(사용자와 가까운 쪽)에서 아래(물리적 전송)로 갈수록 토대가 넓어지는 피라미드로 그려볼 수 있습니다.
 
-<div class="layer-stack">
+<div class="tier-stack">
   <div class="dir"><span>보낼 때 ↓ (정보 덧붙임)</span><span>받을 때 ↑ (한 겹씩 벗김)</span></div>
-  <div class="layer layer-1"><span class="l-name">애플리케이션 계층</span><span class="l-desc">무슨 내용을 주고받을지 · HTTP, DNS, 이메일</span></div>
-  <div class="layer layer-2"><span class="l-name">전송 계층</span><span class="l-desc">어떻게 전달할지 · TCP, UDP</span></div>
-  <div class="layer layer-3"><span class="l-name">인터넷 계층</span><span class="l-desc">어디로 갈지(경로) · IP</span></div>
-  <div class="layer layer-4"><span class="l-name">네트워크 인터페이스 계층</span><span class="l-desc">실제 물리적 전송 · 케이블, 와이파이</span></div>
+  <div class="tier tier-1"><span class="l-name">애플리케이션 계층</span><span class="l-desc">무슨 내용을 주고받을지 · HTTP, DNS, 이메일</span></div>
+  <div class="tier tier-2"><span class="l-name">전송 계층</span><span class="l-desc">어떻게 전달할지 · TCP, UDP</span></div>
+  <div class="tier tier-3"><span class="l-name">인터넷 계층</span><span class="l-desc">어디로 갈지(경로) · IP</span></div>
+  <div class="tier tier-4"><span class="l-name">네트워크 인터페이스 계층</span><span class="l-desc">실제 물리적 전송 · 케이블, 와이파이</span></div>
 </div>
 
 데이터를 보낼 때는 **위에서 아래로** 내려가며 각 층이 정보를 덧붙이고,
