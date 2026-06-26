@@ -174,3 +174,19 @@ body {
 .react-flow__controls-button:hover {
   background: rgba(243, 240, 231, 0.18);
 }
+
+/* 스크롤바 — 트랙 배경 없이 분필색 thumb만 */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(243, 240, 231, 0.25);
+  border-radius: 9999px;
+}
+* {
+  scrollbar-color: rgba(243, 240, 231, 0.25) transparent;
+}
