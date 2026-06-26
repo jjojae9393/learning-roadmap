@@ -1,0 +1,104 @@
+@import "tailwindcss";
+@import "@xyflow/react/dist/style.css";
+
+:root {
+  /* 카툰 색상 팔레트 */
+  --paper: #fdf6e3; /* 종이 같은 배경 */
+  --ink: #2b2b2b; /* 손그림 잉크색 */
+  --topic-primary: #fef08a; /* 노랑 — 핵심 주제 */
+  --topic-secondary: #c4b5fd; /* 보라 — 대안/추천 */
+  --topic-optional: #e5e7eb; /* 회색 — 선택 */
+  --accent: #f97316; /* 포인트 주황 */
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-topic-primary: var(--topic-primary);
+  --color-topic-secondary: var(--topic-secondary);
+  --color-topic-optional: var(--topic-optional);
+  --color-accent: var(--accent);
+  --font-hand: var(--font-gaegu), var(--font-patrick), cursive;
+}
+
+body {
+  background-color: var(--paper);
+  /* 모눈종이 느낌의 은은한 격자 */
+  background-image:
+    linear-gradient(rgba(43, 43, 43, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(43, 43, 43, 0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+  color: var(--ink);
+  font-family: var(--font-gaegu), var(--font-patrick), cursive;
+}
+
+/* 마크다운 상세 콘텐츠 스타일 */
+.markdown h2 {
+  font-weight: 700;
+  font-size: 1.6rem;
+  margin: 1.6rem 0 0.6rem;
+  border-bottom: 2px dashed rgba(43, 43, 43, 0.3);
+  padding-bottom: 0.2rem;
+}
+.markdown h3 {
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin: 1.2rem 0 0.4rem;
+}
+.markdown p {
+  margin: 0.6rem 0;
+}
+.markdown ul {
+  list-style: disc;
+  padding-left: 1.4rem;
+  margin: 0.6rem 0;
+}
+.markdown ol {
+  list-style: decimal;
+  padding-left: 1.4rem;
+  margin: 0.6rem 0;
+}
+.markdown li {
+  margin: 0.25rem 0;
+}
+.markdown a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.markdown code {
+  font-family: var(--font-mono, monospace);
+  background: rgba(43, 43, 43, 0.08);
+  border: 1px solid rgba(43, 43, 43, 0.2);
+  border-radius: 4px;
+  padding: 0.05rem 0.35rem;
+  font-size: 0.92em;
+}
+.markdown pre {
+  background: #2b2b2b;
+  color: #fdf6e3;
+  border-radius: 10px;
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 0.8rem 0;
+}
+.markdown pre code {
+  background: transparent;
+  border: none;
+  color: inherit;
+}
+.markdown blockquote {
+  border-left: 4px solid var(--accent);
+  padding-left: 1rem;
+  color: rgba(43, 43, 43, 0.7);
+  margin: 0.8rem 0;
+}
+
+/* React Flow 기본 테두리 제거 (rough.js로 직접 그림) */
+.react-flow__node {
+  border: none;
+  background: transparent;
+}
+
+.react-flow__attribution {
+  display: none;
+}
