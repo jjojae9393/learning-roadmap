@@ -1,5 +1,6 @@
-// ROADMAP 트리 → React Flow 노드/엣지 좌표 변환
-import { ROADMAP, type Topic, type TopicType } from "./roadmap";
+// ROADMAPS 트리 → React Flow 노드/엣지 좌표 변환
+// 여러 로드맵을 가로로 나란히 배치(컬럼)한다.
+import { ROADMAPS, type Roadmap, type Topic, type TopicType } from "./roadmap";
 
 export interface FlowNode {
   id: string;
@@ -20,67 +21,73 @@ export interface FlowEdge {
 const SPINE_GAP = 210; // 메인 줄기 노드 세로 간격
 const CHILD_GAP = 66; // 곁가지 노드 세로 간격
 const BRANCH_DX = 360; // 줄기 → 곁가지 가로 거리
+const COLUMN_GAP = 1500; // 로드맵 컬럼 간 가로 간격
 const ROOT_Y = -150;
 
 export function buildGraph(): { nodes: FlowNode[]; edges: FlowEdge[] } {
   const nodes: FlowNode[] = [];
   const edges: FlowEdge[] = [];
 
-  // 최상단 루트 라벨
-  nodes.push({
-    id: "__root",
-    type: "root",
-    position: { x: 0, y: ROOT_Y },
-    data: { title: "Backend", topicType: "primary", hasChildren: false },
-  });
+  ROADMAPS.forEach((roadmap: Roadmap, col: number) => {
+    const baseX = col * COLUMN_GAP;
+    const rootId = `__root_${roadmap.id}`;
 
-  ROADMAP.forEach((topic: Topic, i: number) => {
-    const spineY = i * SPINE_GAP;
+    // 컬럼 최상단 루트 라벨
     nodes.push({
-      id: topic.id,
-      type: "topic",
-      position: { x: 0, y: spineY },
-      data: {
-        title: topic.title,
-        topicType: topic.type,
-        hasChildren: !!topic.children?.length,
-      },
+      id: rootId,
+      type: "root",
+      position: { x: baseX, y: ROOT_Y },
+      data: { title: roadmap.title, topicType: "primary", hasChildren: false },
     });
 
-    // 줄기 연결 (루트 → 첫 노드, 그 다음은 노드 → 노드)
-    const prev = i === 0 ? "__root" : ROADMAP[i - 1].id;
-    edges.push({
-      id: `${prev}->${topic.id}`,
-      source: prev,
-      target: topic.id,
-      sourceHandle: "b",
-      targetHandle: "t",
-      variant: "spine",
-    });
-
-    // 곁가지 배치
-    const children = topic.children ?? [];
-    const dir = topic.side === "left" ? -1 : 1;
-    const totalH = (children.length - 1) * CHILD_GAP;
-    children.forEach((child, k) => {
-      const childY = spineY + k * CHILD_GAP - totalH / 2;
+    roadmap.topics.forEach((topic: Topic, i: number) => {
+      const spineY = i * SPINE_GAP;
       nodes.push({
-        id: child.id,
+        id: topic.id,
         type: "topic",
-        position: { x: dir * BRANCH_DX, y: childY },
+        position: { x: baseX, y: spineY },
         data: {
-          title: child.title,
-          topicType: child.type,
-          hasChildren: !!child.children?.length,
+          title: topic.title,
+          topicType: topic.type,
+          hasChildren: !!topic.children?.length,
         },
       });
+
+      // 줄기 연결 (루트 → 첫 노드, 그 다음은 노드 → 노드)
+      const prev = i === 0 ? rootId : roadmap.topics[i - 1].id;
       edges.push({
-        id: `${topic.id}->${child.id}`,
-        source: topic.id,
-        target: child.id,
-        sourceHandle: dir === 1 ? "r" : "l",
-        targetHandle: dir === 1 ? "l" : "r",
-        variant: "branch",
+        id: `${prev}->${topic.id}`,
+        source: prev,
+        target: topic.id,
+        sourceHandle: "b",
+        targetHandle: "t",
+        variant: "spine",
+      });
+
+      // 곁가지 배치
+      const children = topic.children ?? [];
+      const dir = topic.side === "left" ? -1 : 1;
+      const totalH = (children.length - 1) * CHILD_GAP;
+      children.forEach((child, k) => {
+        const childY = spineY + k * CHILD_GAP - totalH / 2;
+        nodes.push({
+          id: child.id,
+          type: "topic",
+          position: { x: baseX + dir * BRANCH_DX, y: childY },
+          data: {
+            title: child.title,
+            topicType: child.type,
+            hasChildren: !!child.children?.length,
+          },
+        });
+        edges.push({
+          id: `${topic.id}->${child.id}`,
+          source: topic.id,
+          target: child.id,
+          sourceHandle: dir === 1 ? "r" : "l",
+          targetHandle: dir === 1 ? "l" : "r",
+          variant: "branch",
+        });
       });
     });
   });

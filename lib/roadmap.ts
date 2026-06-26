@@ -1,13 +1,14 @@
 // 학습 로드맵 데이터 모델
 //
 // - Topic: 하나의 학습 주제. 트리 구조(children)로 상위/하위를 표현.
+// - Roadmap: 여러 개의 로드맵(Backend, Frontend ...)을 나란히 둔다.
 // - 메인 줄기(spine)는 세로로 이어지고, 각 줄기의 children은 좌/우로 가지치기.
 // - 그래프(노드/엣지)는 이 트리에서 자동 생성한다.
 
 export type TopicType = "primary" | "secondary" | "optional";
 
 export interface Topic {
-  id: string; // URL slug 으로도 사용
+  id: string; // URL slug 으로도 사용 (로드맵 간 유일해야 함)
   title: string;
   type: TopicType;
   /** 그래프에서 자식 노드를 어느 쪽에 배치할지 */
@@ -17,9 +18,14 @@ export interface Topic {
   children?: Topic[];
 }
 
-// ── 로드맵 트리 정의 ──────────────────────────────────────────────
-// 메인 줄기 = 최상위 배열. 각 항목의 children = 곁가지(하위 주제).
-export const ROADMAP: Topic[] = [
+export interface Roadmap {
+  id: string;
+  title: string;
+  topics: Topic[];
+}
+
+// ── Backend 로드맵 ────────────────────────────────────────────────
+const BACKEND: Topic[] = [
   {
     id: "introduction",
     title: "Introduction",
@@ -106,9 +112,123 @@ export const ROADMAP: Topic[] = [
   },
 ];
 
+// ── Frontend 로드맵 (이미지 기반 간략 샘플) ─────────────────────────
+const FRONTEND: Topic[] = [
+  {
+    id: "fe-internet",
+    title: "Internet",
+    type: "primary",
+    side: "right",
+    summary: "인터넷과 브라우저가 동작하는 기본 원리.",
+    children: [
+      { id: "fe-how-internet-works", title: "How does the internet work?", type: "secondary" },
+      { id: "fe-http", title: "What is HTTP?", type: "secondary" },
+      { id: "fe-browsers", title: "Browsers and how they work?", type: "secondary" },
+    ],
+  },
+  {
+    id: "fe-html",
+    title: "HTML",
+    type: "primary",
+    side: "left",
+    summary: "웹 문서의 뼈대를 만드는 마크업 언어.",
+    children: [
+      { id: "fe-semantic-html", title: "Writing Semantic HTML", type: "secondary" },
+      { id: "fe-forms", title: "Forms and Validations", type: "secondary" },
+      { id: "fe-accessibility", title: "Accessibility", type: "optional" },
+    ],
+  },
+  {
+    id: "fe-css",
+    title: "CSS",
+    type: "primary",
+    side: "right",
+    summary: "레이아웃과 스타일을 입히는 언어.",
+    children: [
+      { id: "fe-layouts", title: "Making Layouts", type: "secondary" },
+      { id: "fe-responsive", title: "Responsive Design", type: "secondary" },
+      { id: "fe-box-model", title: "Box Model", type: "optional" },
+    ],
+  },
+  {
+    id: "fe-javascript",
+    title: "JavaScript",
+    type: "primary",
+    side: "left",
+    summary: "웹에 동작을 부여하는 핵심 언어.",
+    children: [
+      { id: "fe-dom", title: "DOM Manipulation", type: "secondary" },
+      { id: "fe-fetch", title: "Fetch API / Ajax", type: "secondary" },
+      { id: "fe-es6", title: "ES6+ and Modules", type: "secondary" },
+    ],
+  },
+  {
+    id: "fe-version-control",
+    title: "Version Control Systems",
+    type: "primary",
+    side: "right",
+    summary: "코드 변경 이력 관리와 협업.",
+    children: [
+      { id: "fe-git", title: "Git", type: "secondary" },
+      { id: "fe-github", title: "GitHub", type: "secondary" },
+    ],
+  },
+  {
+    id: "fe-package-managers",
+    title: "Package Managers",
+    type: "primary",
+    side: "left",
+    summary: "의존성 설치/관리 도구. npm, yarn, pnpm.",
+    children: [
+      { id: "fe-npm", title: "npm", type: "secondary" },
+      { id: "fe-yarn", title: "yarn", type: "optional" },
+    ],
+  },
+  {
+    id: "fe-framework",
+    title: "Pick a Framework",
+    type: "primary",
+    side: "right",
+    summary: "컴포넌트 기반 UI 프레임워크 하나를 골라 익히기.",
+    children: [
+      { id: "fe-react", title: "React.js", type: "secondary" },
+      { id: "fe-vue", title: "Vue.js", type: "secondary" },
+      { id: "fe-angular", title: "Angular", type: "optional" },
+    ],
+  },
+  {
+    id: "fe-css-frameworks",
+    title: "CSS Frameworks",
+    type: "primary",
+    side: "left",
+    summary: "빠른 스타일링을 돕는 CSS 프레임워크.",
+    children: [
+      { id: "fe-tailwind", title: "Tailwind CSS", type: "secondary" },
+      { id: "fe-bootstrap", title: "Bootstrap", type: "optional" },
+    ],
+  },
+  {
+    id: "fe-testing",
+    title: "Testing your Apps",
+    type: "primary",
+    side: "right",
+    summary: "Unit / Integration / Functional 테스트로 품질 확보.",
+    children: [
+      { id: "fe-jest", title: "Jest", type: "secondary" },
+      { id: "fe-cypress", title: "Cypress", type: "secondary" },
+    ],
+  },
+];
+
+// ── 로드맵 목록 (나란히 표시) ───────────────────────────────────────
+export const ROADMAPS: Roadmap[] = [
+  { id: "backend", title: "Backend", topics: BACKEND },
+  { id: "frontend", title: "Frontend", topics: FRONTEND },
+];
+
 // ── 파생 유틸 ────────────────────────────────────────────────────
 
-/** id → Topic 평탄화 인덱스 (모든 깊이) */
+/** id → Topic 평탄화 인덱스 (모든 로드맵/깊이) */
 const index: Record<string, Topic> = {};
 function walk(topics: Topic[]) {
   for (const t of topics) {
@@ -116,7 +236,7 @@ function walk(topics: Topic[]) {
     if (t.children) walk(t.children);
   }
 }
-walk(ROADMAP);
+ROADMAPS.forEach((r) => walk(r.topics));
 
 export function getTopic(id: string): Topic | undefined {
   return index[id];
