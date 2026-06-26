@@ -2,18 +2,20 @@
 @import "@xyflow/react/dist/style.css";
 
 :root {
-  /* 카툰 색상 팔레트 */
-  --paper: #fdf6e3; /* 종이 같은 배경 */
-  --ink: #2b2b2b; /* 손그림 잉크색 */
-  --topic-primary: #fef08a; /* 노랑 — 핵심 주제 */
-  --topic-secondary: #c4b5fd; /* 보라 — 대안/추천 */
-  --topic-optional: #e5e7eb; /* 회색 — 선택 */
-  --accent: #f97316; /* 포인트 주황 */
+  /* 칠판 판서 색상 팔레트 */
+  --board: #1f3b32; /* 칠판 바탕(짙은 녹색) */
+  --board-edge: #142a23; /* 가장자리 음영 */
+  --chalk: #f3f0e7; /* 분필 흰색(살짝 따뜻한) */
+  --topic-primary: #f3f0e7; /* 흰 분필 — 핵심 */
+  --topic-secondary: #f2e06b; /* 노란 분필 — 추천 */
+  --topic-optional: #9fc8bb; /* 청록 분필 — 선택 */
+  --accent: #f2b84b; /* 강조(노란 분필) */
 }
 
 @theme inline {
-  --color-paper: var(--paper);
-  --color-ink: var(--ink);
+  --color-board: var(--board);
+  --color-chalk: var(--chalk);
+  --color-ink: var(--chalk); /* 기존 text-ink 클래스 호환 */
   --color-topic-primary: var(--topic-primary);
   --color-topic-secondary: var(--topic-secondary);
   --color-topic-optional: var(--topic-optional);
@@ -22,22 +24,26 @@
 }
 
 body {
-  background-color: var(--paper);
-  /* 모눈종이 느낌의 은은한 격자 */
+  background-color: var(--board);
+  /* 칠판 느낌: 은은한 분필 격자 + 가장자리 비네팅 */
   background-image:
-    linear-gradient(rgba(43, 43, 43, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(43, 43, 43, 0.04) 1px, transparent 1px);
-  background-size: 28px 28px;
-  color: var(--ink);
+    linear-gradient(rgba(243, 240, 231, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(243, 240, 231, 0.035) 1px, transparent 1px),
+    radial-gradient(ellipse at center, transparent 55%, var(--board-edge) 100%);
+  background-size:
+    30px 30px,
+    30px 30px,
+    100% 100%;
+  color: var(--chalk);
   font-family: var(--font-gaegu), var(--font-patrick), cursive;
 }
 
-/* 마크다운 상세 콘텐츠 스타일 */
+/* 마크다운 상세 콘텐츠 스타일 (칠판 위 분필 글씨) */
 .markdown h2 {
   font-weight: 700;
   font-size: 1.6rem;
   margin: 1.6rem 0 0.6rem;
-  border-bottom: 2px dashed rgba(43, 43, 43, 0.3);
+  border-bottom: 2px dashed rgba(243, 240, 231, 0.35);
   padding-bottom: 0.2rem;
 }
 .markdown h3 {
@@ -67,15 +73,16 @@ body {
 }
 .markdown code {
   font-family: var(--font-mono, monospace);
-  background: rgba(43, 43, 43, 0.08);
-  border: 1px solid rgba(43, 43, 43, 0.2);
+  background: rgba(243, 240, 231, 0.1);
+  border: 1px solid rgba(243, 240, 231, 0.25);
   border-radius: 4px;
   padding: 0.05rem 0.35rem;
   font-size: 0.92em;
 }
 .markdown pre {
-  background: #2b2b2b;
-  color: #fdf6e3;
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--chalk);
+  border: 1px solid rgba(243, 240, 231, 0.2);
   border-radius: 10px;
   padding: 1rem;
   overflow-x: auto;
@@ -89,7 +96,7 @@ body {
 .markdown blockquote {
   border-left: 4px solid var(--accent);
   padding-left: 1rem;
-  color: rgba(43, 43, 43, 0.7);
+  color: rgba(243, 240, 231, 0.75);
   margin: 0.8rem 0;
 }
 
@@ -101,4 +108,10 @@ body {
 
 .react-flow__attribution {
   display: none;
+}
+
+/* 칠판 위 컨트롤 버튼 가독성 */
+.react-flow__controls-button {
+  background: rgba(243, 240, 231, 0.9);
+  border-bottom: 1px solid var(--board-edge);
 }

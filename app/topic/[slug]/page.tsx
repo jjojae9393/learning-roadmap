@@ -38,7 +38,7 @@ export default async function TopicPage({
 
       <header className="mt-4 mb-8">
         <span
-          className={`inline-block rounded-md border-2 border-ink px-2 py-0.5 font-hand text-sm ${BADGE[topic.type].cls}`}
+          className={`inline-block rounded-md border-2 border-board px-2 py-0.5 font-hand text-sm text-board ${BADGE[topic.type].cls}`}
         >
           {BADGE[topic.type].label}
         </span>
@@ -70,11 +70,11 @@ export default async function TopicPage({
               <li key={child.id}>
                 <Link
                   href={`/topic/${child.id}`}
-                  className={`block rounded-xl border-[3px] border-ink px-4 py-3 font-hand text-lg text-ink shadow-[3px_4px_0_rgba(43,43,43,0.25)] transition-transform hover:-translate-y-0.5 ${BADGE[child.type].cls}`}
+                  className={`block rounded-xl border-[3px] border-board px-4 py-3 font-hand text-lg text-board shadow-[3px_4px_0_rgba(0,0,0,0.35)] transition-transform hover:-translate-y-0.5 ${BADGE[child.type].cls}`}
                 >
                   <span className="block font-bold">{child.title}</span>
                   {child.summary && (
-                    <span className="text-base text-ink/70">{child.summary}</span>
+                    <span className="text-base text-board/70">{child.summary}</span>
                   )}
                 </Link>
               </li>

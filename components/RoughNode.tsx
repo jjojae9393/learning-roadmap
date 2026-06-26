@@ -2,29 +2,34 @@
 
 import { Handle, Position, type NodeProps } from "@xyflow/react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import rough from "roughjs";
 import type { TopicType } from "@/lib/roadmap";
 
-const FILL: Record<TopicType, string> = {
-  primary: "#fef08a", // 노랑
-  secondary: "#c4b5fd", // 보라
-  optional: "#e5e7eb", // 회색
+// 분필 색상 (테두리 = 글씨색)
+const CHALK: Record<TopicType, string> = {
+  primary: "#f3f0e7", // 흰 분필
+  secondary: "#f2e06b", // 노란 분필
+  optional: "#9fc8bb", // 청록 분필
 };
 
 interface Data {
   title: string;
   topicType: TopicType;
+  level: 1 | 2 | 3;
   hasChildren: boolean;
+  expanded: boolean;
 }
 
-/** 손그림 스케치 테두리를 가진 토픽 노드 */
-export function RoughNode({ data }: NodeProps) {
-  const { title, topicType, hasChildren } = data as unknown as Data;
+/** 칠판 위 분필로 그린 듯한 토픽 노드 (좌→우 플로우) */
+export function RoughNode({ id, data }: NodeProps) {
+  const { title, topicType, level, hasChildren, expanded } = data as unknown as Data;
+  const router = useRouter();
   const wrapRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
+  const stroke = CHALK[topicType];
 
-  // 콘텐츠 렌더 후 실제 크기 측정
   useLayoutEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
@@ -35,7 +40,7 @@ export function RoughNode({ data }: NodeProps) {
     return () => ro.disconnect();
   }, []);
 
-  // 측정된 크기에 맞춰 rough.js 사각형 그리기
+  // 측정된 크기에 맞춰 rough.js 분필 사각형 그리기 (채움 없이 외곽선만)
   useEffect(() => {
     const svg = svgRef.current;
     if (!svg || size.w === 0) return;
@@ -43,26 +48,27 @@ export function RoughNode({ data }: NodeProps) {
     const rc = rough.svg(svg);
     const pad = 3;
     const rect = rc.rectangle(pad, pad, size.w - pad * 2, size.h - pad * 2, {
-      fill: FILL[topicType],
+      stroke,
+      strokeWidth: level === 3 ? 1.6 : 2.2,
+      roughness: 2.2,
+      bowing: 2,
+      fill: "rgba(243,240,231,0.04)",
       fillStyle: "solid",
-      roughness: 1.6,
-      bowing: 1.5,
-      stroke: "#2b2b2b",
-      strokeWidth: 2.2,
       seed: hashSeed(title),
     });
     svg.appendChild(rect);
-  }, [size, topicType, title]);
+  }, [size, stroke, level, title]);
+
+  const goDetail = (e: React.MouseEvent) => {
+    e.stopPropagation(); // 노드 펼침 동작과 분리
+    router.push(`/topic/${id}`);
+  };
 
   return (
     <div
       ref={wrapRef}
-      className="relative inline-flex items-center justify-center px-5 py-2 cursor-pointer select-none"
-      style={{
-        minWidth: 120,
-        maxWidth: 230,
-        filter: "drop-shadow(2px 3px 0 rgba(43,43,43,0.25))",
-      }}
+      className="relative inline-flex items-center gap-2 px-4 py-1.5 cursor-pointer select-none"
+      style={{ minWidth: 96, maxWidth: 240 }}
     >
       <svg
         ref={svgRef}
@@ -70,17 +76,41 @@ export function RoughNode({ data }: NodeProps) {
         width={size.w}
         height={size.h}
       />
-      <span className="relative z-10 text-center font-hand text-[17px] leading-tight text-ink">
+      <span
+        className="relative z-10 font-hand leading-tight"
+        style={{
+          color: stroke,
+          fontSize: level === 3 ? 15 : 17,
+          fontWeight: topicType === "primary" ? 700 : 400,
+        }}
+      >
         {title}
       </span>
 
-      {/* 연결용 핸들 (보이지 않게) — 사방으로 source/target 모두 제공 */}
-      <Handle id="t" type="target" position={Position.Top} className="!opacity-0" />
-      <Handle id="b" type="source" position={Position.Bottom} className="!opacity-0" />
-      <Handle id="l" type="source" position={Position.Left} className="!opacity-0" />
+      {/* 펼침/접기 표시 (자식 있을 때만) */}
+      {hasChildren && (
+        <span
+          className="relative z-10 font-hand text-sm"
+          style={{ color: stroke }}
+          aria-hidden
+        >
+          {expanded ? "▾" : "▸"}
+        </span>
+      )}
+
+      {/* 상세 페이지 아이콘 (펼침과 분리) */}
+      <button
+        onClick={goDetail}
+        title="상세 보기"
+        className="absolute -top-2 -right-2 z-20 flex h-5 w-5 items-center justify-center rounded-full text-[11px] leading-none"
+        style={{ color: "#1f3b32", background: stroke }}
+      >
+        ⓘ
+      </button>
+
+      {/* 가로 플로우 연결 핸들 */}
       <Handle id="l" type="target" position={Position.Left} className="!opacity-0" />
       <Handle id="r" type="source" position={Position.Right} className="!opacity-0" />
-      <Handle id="r" type="target" position={Position.Right} className="!opacity-0" />
     </div>
   );
 }

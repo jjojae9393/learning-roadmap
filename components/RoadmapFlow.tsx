@@ -9,18 +9,19 @@ import {
   type Edge,
   type NodeMouseHandler,
 } from "@xyflow/react";
-import { useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 import { buildGraph } from "@/lib/layout";
 import { RoughNode } from "./RoughNode";
 import { RootNode } from "./RootNode";
 
-const nodeTypes = { topic: RoughNode, root: RootNode };
+const nodeTypes = { topic: RoughNode, section: RootNode };
 
 export function RoadmapFlow() {
-  const router = useRouter();
+  // 펼쳐진 대주제(2계층) id 집합. 기본: 전부 접힘(=하위 숨김)
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+
   const { nodes, edges } = useMemo(() => {
-    const g = buildGraph();
+    const g = buildGraph(expanded);
     const ns: Node[] = g.nodes.map((n) => ({
       id: n.id,
       type: n.type,
@@ -31,21 +32,31 @@ export function RoadmapFlow() {
       id: e.id,
       source: e.source,
       target: e.target,
-      sourceHandle: e.sourceHandle,
-      targetHandle: e.targetHandle,
-      type: e.variant === "spine" ? "default" : "smoothstep",
+      sourceHandle: "r",
+      targetHandle: "l",
+      type: "smoothstep",
       style: {
-        stroke: "#2b2b2b",
-        strokeWidth: 2,
-        strokeDasharray: e.variant === "branch" ? "1 7" : undefined,
+        stroke: "#f3f0e7",
+        strokeWidth: 1.6,
+        strokeOpacity: e.variant === "section" ? 0.75 : 0.5,
+        strokeDasharray: e.variant === "branch" ? "2 6" : undefined,
         strokeLinecap: "round" as const,
       },
     }));
     return { nodes: ns, edges: es };
-  }, []);
+  }, [expanded]);
 
+  // 노드 클릭 = 펼침/접기 (자식 있는 대주제만). 상세는 노드 안 ⓘ 아이콘.
   const onNodeClick: NodeMouseHandler = (_, node) => {
-    if (node.type === "topic") router.push(`/topic/${node.id}`);
+    const data = node.data as unknown as { hasChildren: boolean; level: number };
+    if (node.type === "topic" && data.hasChildren) {
+      setExpanded((prev) => {
+        const next = new Set(prev);
+        if (next.has(node.id)) next.delete(node.id);
+        else next.add(node.id);
+        return next;
+      });
+    }
   };
 
   return (
@@ -55,7 +66,7 @@ export function RoadmapFlow() {
       nodeTypes={nodeTypes}
       onNodeClick={onNodeClick}
       fitView
-      fitViewOptions={{ padding: 0.2 }}
+      fitViewOptions={{ padding: 0.15 }}
       minZoom={0.3}
       maxZoom={1.6}
       proOptions={{ hideAttribution: true }}
@@ -63,7 +74,7 @@ export function RoadmapFlow() {
       nodesConnectable={false}
       elementsSelectable={false}
     >
-      <Background variant={BackgroundVariant.Dots} gap={28} size={1} color="#d8cfb4" />
+      <Background variant={BackgroundVariant.Dots} gap={30} size={1} color="rgba(243,240,231,0.12)" />
       <Controls showInteractive={false} />
     </ReactFlow>
   );
