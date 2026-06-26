@@ -15,7 +15,6 @@ export interface FlowNode {
     level: 1 | 2 | 3;
     hasChildren: boolean;
     expanded: boolean;
-    hasContent: boolean; // 상세 .md 존재 여부 (ⓘ 아이콘 노출 기준)
   };
 }
 
@@ -33,10 +32,7 @@ const ROW_GAP = 96; // 대주제 세로 간격
 const CHILD_ROW_GAP = 64; // 하위 세로 간격
 const SECTION_GAP = 70; // 섹션 사이 여백
 
-export function buildGraph(
-  expanded: Set<string>,
-  contentSlugs: Set<string>,
-): {
+export function buildGraph(expanded: Set<string>): {
   nodes: FlowNode[];
   edges: FlowEdge[];
 } {
@@ -62,7 +58,6 @@ export function buildGraph(
           level: 2,
           hasChildren,
           expanded: isOpen,
-          hasContent: contentSlugs.has(topic.id),
         },
       });
       edges.push({
@@ -86,7 +81,6 @@ export function buildGraph(
               level: 3,
               hasChildren: false,
               expanded: false,
-              hasContent: contentSlugs.has(child.id),
             },
           });
           edges.push({
@@ -113,7 +107,6 @@ export function buildGraph(
         level: 1,
         hasChildren: true,
         expanded: true,
-        hasContent: false,
       },
     });
 

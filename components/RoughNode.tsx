@@ -2,7 +2,6 @@
 
 import { Handle, Position, type NodeProps } from "@xyflow/react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import rough from "roughjs";
 import type { TopicType } from "@/lib/roadmap";
 
@@ -19,13 +18,11 @@ interface Data {
   level: 1 | 2 | 3;
   hasChildren: boolean;
   expanded: boolean;
-  hasContent: boolean;
 }
 
 /** 칠판 위 분필로 그린 듯한 토픽 노드 (좌→우 플로우) */
-export function RoughNode({ id, data }: NodeProps) {
-  const { title, topicType, level, hasChildren, expanded, hasContent } = data as unknown as Data;
-  const router = useRouter();
+export function RoughNode({ data }: NodeProps) {
+  const { title, topicType, level, hasChildren, expanded } = data as unknown as Data;
   const wrapRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
@@ -60,11 +57,6 @@ export function RoughNode({ id, data }: NodeProps) {
     svg.appendChild(rect);
   }, [size, stroke, level, title]);
 
-  const goDetail = (e: React.MouseEvent) => {
-    e.stopPropagation(); // 노드 펼침 동작과 분리
-    router.push(`/topic/${id}`);
-  };
-
   return (
     <div
       ref={wrapRef}
@@ -97,20 +89,6 @@ export function RoughNode({ id, data }: NodeProps) {
         >
           {expanded ? "▾" : "▸"}
         </span>
-      )}
-
-      {/* 상세 보기 (상세 .md 가 있는 노드만). 펼침 동작과 분리 */}
-      {hasContent && (
-        <button
-          onClick={goDetail}
-          title="상세 보기"
-          className="group/detail relative z-20 ml-0.5 inline-flex h-[19px] w-[19px] items-center justify-center rounded-full border text-[11px] leading-none opacity-70 transition-opacity hover:opacity-100"
-          style={{ color: stroke, borderColor: stroke }}
-        >
-          <span className="transition-transform group-hover/detail:translate-x-px group-hover/detail:-translate-y-px">
-            ↗
-          </span>
-        </button>
       )}
 
       {/* 가로 플로우 연결 핸들 */}

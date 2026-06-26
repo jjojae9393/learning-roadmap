@@ -1,8 +1,8 @@
 import { RoadmapFlow } from "@/components/RoadmapFlow";
-import { contentSlugs } from "@/lib/content";
+import { getAllContents } from "@/lib/content";
 
 export default function Home() {
-  const slugs = contentSlugs();
+  const contents = getAllContents();
   return (
     <main className="flex flex-1 flex-col">
       <header className="border-b-[3px] border-ink/80 px-6 py-4">
@@ -14,7 +14,7 @@ export default function Home() {
 
       {/* 로드맵 캔버스 */}
       <div className="relative flex-1">
-        <RoadmapFlow contentSlugs={slugs} />
+        <RoadmapFlow contents={contents} />
       </div>
     </main>
   );
